@@ -2,6 +2,8 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using BotCallCenter.Domain;
+using BotCallCenter.Utils;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 
@@ -16,9 +18,14 @@ namespace BotCallCenter
         /// </summary>
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
         {
+            activity.ParseHtmlAttachments();
             if (activity.Type == ActivityTypes.Message)
             {
-                await Conversation.SendAsync(activity, () => new Dialogs.RootDialog());
+                var channelEndpoint = DialogManager.GetChannelEndpoint(activity);
+                if (channelEndpoint != null)
+                {
+                    await Redirector.RedirectToEndpoint(activity, channelEndpoint);
+                }
             }
             else
             {
