@@ -26,5 +26,25 @@ namespace BotCallCenter.Utils
             activity.Attachments.Clear();
             return activity;
         }
+
+        public static string FindAgentSip(this Activity activity)
+        {
+            var agentSip = "<NONE>";
+            foreach (var entity in activity.Entities)
+            {
+                if (entity.Type == "Agent")
+                {
+                    foreach (var property in entity.Properties)
+                    {
+                        if (property.Key == "AgentSip")
+                        {
+                            agentSip = property.Value.ToString();
+                        }
+                    }
+                }
+            }
+
+            return agentSip;
+        }
     }
 }

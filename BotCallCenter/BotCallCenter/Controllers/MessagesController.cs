@@ -18,13 +18,38 @@ namespace BotCallCenter
         /// </summary>
         public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
         {
-            activity.ParseHtmlAttachments();
             if (activity.Type == ActivityTypes.Message)
             {
-                var channelEndpoint = DialogManager.GetChannelEndpoint(activity);
-                if (channelEndpoint != null)
+                activity.ParseHtmlAttachments();
+                var agentSip = activity.FindAgentSip();
+                if (agentSip == "<NONE>")
                 {
-                    await Redirector.RedirectToEndpoint(activity, channelEndpoint);
+                    var target = Orchestrator.FindConversation(activity.From.Id);
+                    if (target == null)
+                    {
+                        await Redirector.ReturnError(activity, "No active Conversation found");
+                    }
+                    else
+                    {
+                        await Redirector.RedirectToEndpoint(activity, target);
+                    }
+                }
+                else
+                {
+                    var target = Orchestrator.FindAgent(agentSip);
+                    if (target == null)
+                    {
+                        await Redirector.ReturnError(activity, "Agent not found");
+
+                    }
+                    else if (!Orchestrator.AddConversationFromActivity(target.Id, activity))
+                    {
+                        await Redirector.ReturnError(activity, "Agent currently busy");
+                    }
+                    else
+                    {
+                        await Redirector.RedirectToEndpoint(activity, target);
+                    }
                 }
             }
             else
@@ -59,6 +84,17 @@ namespace BotCallCenter
             }
             else if (message.Type == ActivityTypes.Ping)
             {
+            }
+            else if (message.Type == ActivityTypes.EndOfConversation)
+            {
+                var agentSip = message.FindAgentSip();
+                if (agentSip == "<NONE>") return null;
+
+                var target = Orchestrator.FindAgent(agentSip);
+                if (target != null)
+                {
+                    Orchestrator.RemoveActiveConversation(target.Id);
+                }
             }
 
             return null;

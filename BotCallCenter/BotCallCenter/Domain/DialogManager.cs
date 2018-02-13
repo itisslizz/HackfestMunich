@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using BotCallCenter.Configuration;
+using BotCallCenter.Data;
 using BotCallCenter.Models;
 using Microsoft.Bot.Connector;
 
