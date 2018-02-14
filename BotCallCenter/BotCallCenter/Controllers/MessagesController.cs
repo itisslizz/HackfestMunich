@@ -40,11 +40,10 @@ namespace BotCallCenter
                     if (target == null)
                     {
                         await Redirector.ReturnError(activity, "Agent not found");
-
                     }
-                    else if (!Orchestrator.AddConversationFromActivity(target.Id, activity))
+                    else if (!Orchestrator.SetConversationFromActivity(target.Id, activity))
                     {
-                        await Redirector.ReturnError(activity, "Agent currently busy");
+                        await Redirector.ReturnError(activity, "Agent currently busy in other conversation");
                     }
                     else
                     {

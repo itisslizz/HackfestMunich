@@ -1,4 +1,6 @@
-﻿using BotCallCenter.Models;
+﻿using System.Collections.Generic;
+using BotCallCenter.Models;
+using Microsoft.Bot.Connector;
 
 namespace BotCallCenter.Data
 {
@@ -17,7 +19,7 @@ namespace BotCallCenter.Data
         //};
 
         public static readonly string AgentMarcSip = "sip:mhueppin@luware.com";
-
+        public static readonly string TenantId = "2bcaec71-66d9-4291-bc5a-c67054a7e94d";
         public static readonly ChannelEndpoint AgentMarc = new ChannelEndpoint
         {
             Id =
@@ -25,7 +27,14 @@ namespace BotCallCenter.Data
             Name = "Marc Hueppin",
             ConversationId =
                 "a:1QBS-xMzdo4DJ2LEO1mZEgHLjdFHOBWwwEJOTCFzcAX0nKtODPpOMUrcsjoiIe9-o_ZHxP2ZGkZUygn2_7nJlV-FKypaPInSleGX96LaRoiYzZpM2AVanRf0Dw2wJYLAZ",
-            ServiceUrl = "https://smba.trafficmanager.net/emea-client-ss.msg/"
+            ServiceUrl = "https://smba.trafficmanager.net/emea-client-ss.msg/",
+            ChannelId = "msteams"
+        };
+
+        public static readonly Dictionary<string, ChannelAccount> BotAccounts = new Dictionary<string, ChannelAccount>
+        {
+            {"msteams", new ChannelAccount("28:96718eff-12a0-4141-bae5-f3a2a22e33f0","Hackfest CallCenter Luware")},
+            {"directline", new ChannelAccount("hackfest_munich_luware@nroy3oA6Yxc","Hackfest CallCenter Luware")}
         };
     }
 }

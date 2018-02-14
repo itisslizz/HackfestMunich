@@ -11,6 +11,8 @@ namespace BotCallCenter.Models
         public string Name { get; set; }
         public string ConversationId { get; set; }
         public string ServiceUrl { get; set; }
+
+        public string ChannelId { get; set; }
         
     }
 }

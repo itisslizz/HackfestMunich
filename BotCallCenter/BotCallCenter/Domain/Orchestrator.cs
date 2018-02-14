@@ -28,14 +28,19 @@ namespace BotCallCenter.Domain
             return ActiveConversations.TryGetValue(agentId, out var channelEndpoint) ? channelEndpoint : null;
         }
 
-        public static bool AddConversationFromActivity(string agentId, Activity activity)
+        public static bool SetConversationFromActivity(string agentId, Activity activity)
         {
-            return ActiveConversations.TryAdd(agentId, new ChannelEndpoint()
+            if (ActiveConversations.TryGetValue(agentId, out var oldEndpoint))
+            {
+                return oldEndpoint.ConversationId == activity.Conversation.Id;
+            }
+            return ActiveConversations.TryAdd(agentId, new ChannelEndpoint
             {
                 Id = activity.From.Id,
                 Name = activity.From.Name,
                 ConversationId = activity.Conversation.Id,
-                ServiceUrl = activity.ServiceUrl
+                ServiceUrl = activity.ServiceUrl,
+                ChannelId = activity.ChannelId
             });
         }
 
